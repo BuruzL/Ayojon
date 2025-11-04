@@ -1,19 +1,31 @@
-import { useEffect, useState } from 'react'
+import React from 'react'
+import './App.css'
+import SearchPage from './pages/SearchPage'
 
 export default function App() {
-  const [data, setData] = useState(null)
-
-  useEffect(() => {
-    fetch('/api/health')
-      .then(res => res.json())
-      .then(setData)
-      .catch(console.error)
-  }, [])
-
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Ayojon</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+    <div className="app-root">
+      {/* animated background */}
+      <div className="bg-aurora" aria-hidden />
+
+      <header className="site-header">
+        <div className="brand">
+          <span className="logo-dot" /> Ayojon
+        </div>
+        <nav className="nav">
+          <a href="#">Home</a>
+          <a href="#">Businesses</a>
+          <a href="#">About</a>
+        </nav>
+      </header>
+
+      <main className="site-main">
+        <SearchPage />
+      </main>
+
+      <footer className="site-footer">
+        <small>© {new Date().getFullYear()} Ayojon — AI-powered local discovery</small>
+      </footer>
     </div>
   )
 }
