@@ -1,3 +1,38 @@
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; background: #fafafa; color: #111; }
-input, button { font: inherit; }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root { height: 100%; }
+body { @apply bg-background text-foreground; }
+
+/* Buttons */
+.btn { @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all; }
+.btn-primary { @apply btn bg-primary text-primary-foreground hover:opacity-90; }
+.btn-outline { @apply btn border border-border hover:bg-secondary; }
+
+/* Category ribbon */
+.category-ribbon { @apply overflow-x-auto whitespace-nowrap no-scrollbar flex gap-3 px-2 py-2; }
+.category-button { @apply px-4 py-2 rounded-full bg-secondary text-foreground/80 border border-border hover:bg-primary hover:text-primary-foreground transition; }
+.category-button.active { @apply bg-primary text-primary-foreground; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Fancy background + helpers */
+.bg-app {
+  background:
+    radial-gradient(1200px 500px at 50% -20%, rgba(124,92,255,.18), transparent 60%),
+    radial-gradient(800px 400px at 10% 110%, rgba(34,211,238,.12), transparent 60%),
+    radial-gradient(800px 400px at 90% 110%, rgba(124,92,255,.12), transparent 60%),
+    linear-gradient(#0f0f12, #0f0f12);
+}
+.card-hover { @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/10; }
+.glass { @apply bg-white/5 backdrop-blur border border-white/10; }
+.hero-grid {
+  position: absolute; inset: -2px;
+  background:
+    linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px) 0 0/40px 40px,
+    linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px) 0 0/40px 40px;
+  -webkit-mask-image: radial-gradient(closest-side, rgba(0,0,0,.8), transparent);
+          mask-image: radial-gradient(closest-side, rgba(0,0,0,.8), transparent);
+  animation: gridFloat 12s linear infinite;
+}
+@keyframes gridFloat { 0% { transform: translateY(0px) } 100% { transform: translateY(40px) } }

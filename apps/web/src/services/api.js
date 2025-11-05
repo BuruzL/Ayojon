@@ -1,46 +1,62 @@
-export async function pingHealth() {
-  try {
-    const res = await fetch('/api/health')
-    if (!res.ok) return false
-    const data = await res.json()
-    return !!data?.ok
-  } catch { return false }
+const BUSINESSES = [
+  {
+    id: "1",
+    name: "Coco & Spice Café",
+    type: "Cafe",
+    category: "Food",
+    rating: 4.6,
+    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1600&auto=format&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1498654896293-37aacf113fd9?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1466979939565-131c4b39a51c?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1600&auto=format&fit=crop",
+    ],
+    description: "Artisanal coffee, small bites, and a cozy corner to chat. We love local beans and weekend acoustic sessions.",
+    reviews: [
+      { id: 1, author: "Ayesha", rating: 5, text: "Best latte in town!", date: "2025-10-10" },
+      { id: 2, author: "Rafi", rating: 4, text: "Great vibe, a bit crowded.", date: "2025-10-02" },
+    ],
+    videoUrl: "https://www.youtube.com/embed/ysz5S6PUM-U",
+  },
+  {
+    id: "2",
+    name: "FrameWorks Studio",
+    type: "Studio",
+    category: "Photography",
+    rating: 4.8,
+    image: "https://images.unsplash.com/photo-1516637090014-cb1ab0d08fc7?q=80&w=1600&auto=format&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1526318472351-c75fcf070305?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1600&auto=format&fit=crop",
+    ],
+    description: "Wedding & event photography with cinematic edits. Packages for every budget.",
+    reviews: [{ id: 1, author: "Mitu", rating: 5, text: "Photos looked cinematic!", date: "2025-09-20" }],
+    videoUrl: "",
+  },
+  {
+    id: "3",
+    name: "DressLab",
+    type: "Boutique",
+    category: "Clothing",
+    rating: 4.3,
+    image: "https://images.unsplash.com/photo-1521335629791-ce4aec67dd59?q=80&w=1600&auto=format&fit=crop",
+    images: [],
+    description: "Trendy ethnic & western wear from local designers.",
+    reviews: [],
+    videoUrl: "",
+  },
+]
+
+export async function getBusinesses({ q = "", category = null } = {}) {
+  const term = q.trim().toLowerCase()
+  return BUSINESSES.filter((b) => {
+    const matchesQ = !term || b.name.toLowerCase().includes(term) || b.type.toLowerCase().includes(term) || b.category.toLowerCase().includes(term)
+    const matchesC = !category || b.category === category
+    return matchesQ && matchesC
+  })
 }
 
-// Mock results (replace with real /api/search later)
-export async function searchBusinesses({ query }) {
-  await new Promise(r => setTimeout(r, 700))
-  const cityGuess = /bogura|বগুড়া/i.test(query) ? 'Bogura' : 'Dhaka'
-  return [
-    {
-      id: 'p1',
-      name: 'Bogura Wedding Lens',
-      rating: 4.7,
-      category: 'Photographer',
-      city: cityGuess,
-      distance_km: 2.1,
-      tagline: `Great for: ${query}`,
-      tags: ['Wedding', 'Budget', 'Fast reply']
-    },
-    {
-      id: 'p2',
-      name: 'Golden Frame Studio',
-      rating: 4.9,
-      category: 'Photographer',
-      city: cityGuess,
-      distance_km: 4.5,
-      tagline: 'Premium packages available',
-      tags: ['Premium', 'Editing', 'Team']
-    },
-    {
-      id: 'p3',
-      name: 'Dhanmondi Delight Catering',
-      rating: 4.6,
-      category: 'Catering',
-      city: 'Dhaka',
-      distance_km: 3.3,
-      tagline: 'Hygienic & crowd-friendly menu',
-      tags: ['Catering', 'Halal', 'Event']
-    }
-  ]
+export async function getBusinessById(id) {
+  return BUSINESSES.find((b) => b.id === id)
 }

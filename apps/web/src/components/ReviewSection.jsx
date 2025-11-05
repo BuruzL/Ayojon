@@ -1,130 +1,63 @@
-"use client"
-
 import { useState } from "react"
-import { Star } from "lucide-react"
 
-export default function ReviewSection({ reviews, businessName }) {
-  const [newReview, setNewReview] = useState({
-    author: "",
-    rating: 5,
-    text: "",
-  })
-  const [allReviews, setAllReviews] = useState(reviews)
-  const [showForm, setShowForm] = useState(false)
+export default function ReviewSection({ reviews = [], businessName }) {
+  const [all, setAll] = useState(reviews)
+  const [form, setForm] = useState({ author: "", rating: 5, text: "" })
+  const [open, setOpen] = useState(false)
 
-  const handleSubmitReview = (e) => {
+  const submit = (e) => {
     e.preventDefault()
-
-    if (!newReview.author.trim() || !newReview.text.trim()) {
-      alert("Please fill in all fields")
-      return
-    }
-
-    const review = {
-      id: allReviews.length + 1,
-      author: newReview.author,
-      rating: newReview.rating,
-      text: newReview.text,
-      date: new Date().toISOString().split("T")[0],
-    }
-
-    setAllReviews([review, ...allReviews])
-    setNewReview({ author: "", rating: 5, text: "" })
-    setShowForm(false)
+    if (!form.author.trim() || !form.text.trim()) return
+    const review = { id: all.length + 1, ...form, date: new Date().toISOString().split("T")[0] }
+    setAll([review, ...all])
+    setForm({ author: "", rating: 5, text: "" })
+    setOpen(false)
   }
 
-  const averageRating =
-    allReviews.length > 0 ? (allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length).toFixed(1) : 0
+  const avg = all.length ? (all.reduce((s, r) => s + r.rating, 0) / all.length).toFixed(1) : "0.0"
 
   return (
     <section className="mt-16 pt-12 border-t border-border">
-      <h3 className="text-3xl font-bold text-foreground mb-2">Reviews</h3>
-      <p className="text-foreground/60 mb-8">
-        {allReviews.length} reviews • Average rating: <span className="font-bold text-foreground">{averageRating}</span>
-      </p>
+      <h3 className="text-3xl font-bold mb-2">Reviews {businessName ? `for ${businessName}` : ""}</h3>
+      <p className="text-foreground/60 mb-8">{all.length} reviews • Average rating: <b>{avg}</b></p>
 
-      {/* Add Review Button */}
-      <button
-        onClick={() => setShowForm(!showForm)}
-        className="mb-8 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition-opacity"
-      >
-        {showForm ? "Cancel" : "Write a Review"}
-      </button>
+      <button className="btn-primary mb-6" onClick={() => setOpen(o => !o)}>{open ? "Cancel" : "Write a Review"}</button>
 
-      {/* Review Form */}
-      {showForm && (
-        <form onSubmit={handleSubmitReview} className="mb-12 p-6 bg-secondary rounded-lg">
-          <div className="mb-4">
-            <label className="block text-foreground font-semibold mb-2">Your Name</label>
-            <input
-              type="text"
-              value={newReview.author}
-              onChange={(e) => setNewReview({ ...newReview, author: e.target.value })}
-              className="w-full px-4 py-2 rounded-lg border border-border bg-background text-foreground"
-              placeholder="Enter your name"
-            />
+      {open && (
+        <form onSubmit={submit} className="mb-8 p-6 bg-secondary rounded-xl border border-border space-y-4">
+          <div>
+            <label className="block font-semibold mb-1">Your Name</label>
+            <input className="w-full px-4 py-2 rounded-lg bg-background border border-border" value={form.author} onChange={(e) => setForm({ ...form, author: e.target.value })} placeholder="Enter your name" />
           </div>
-
-          <div className="mb-4">
-            <label className="block text-foreground font-semibold mb-2">Rating</label>
+          <div>
+            <label className="block font-semibold mb-1">Rating</label>
             <div className="flex gap-2">
-              {[1, 2, 3, 4, 5].map((rating) => (
-                <button
-                  key={rating}
-                  type="button"
-                  onClick={() => setNewReview({ ...newReview, rating })}
-                  className="focus:outline-none"
-                >
-                  <Star
-                    size={28}
-                    className={`transition-colors ${
-                      rating <= newReview.rating ? "fill-accent text-accent" : "text-gray-300"
-                    }`}
-                  />
+              {[1,2,3,4,5].map(r => (
+                <button key={r} type="button" onClick={() => setForm({ ...form, rating: r })}>
+                  <span className={`text-2xl ${r <= form.rating ? "text-accent" : "text-gray-500"}`}>★</span>
                 </button>
               ))}
             </div>
           </div>
-
-          <div className="mb-4">
-            <label className="block text-foreground font-semibold mb-2">Review</label>
-            <textarea
-              value={newReview.text}
-              onChange={(e) => setNewReview({ ...newReview, text: e.target.value })}
-              className="w-full px-4 py-2 rounded-lg border border-border bg-background text-foreground min-h-24"
-              placeholder="Share your experience..."
-            />
+          <div>
+            <label className="block font-semibold mb-1">Review</label>
+            <textarea className="w-full px-4 py-2 rounded-lg bg-background border border-border min-h-24" value={form.text} onChange={(e) => setForm({ ...form, text: e.target.value })} placeholder="Share your experience..." />
           </div>
-
-          <button
-            type="submit"
-            className="w-full px-6 py-3 bg-accent text-accent-foreground rounded-lg font-semibold hover:opacity-90 transition-opacity"
-          >
-            Submit Review
-          </button>
+          <button className="btn bg-accent text-accent-foreground w-full">Submit Review</button>
         </form>
       )}
 
-      {/* Reviews List */}
-      <div className="space-y-6">
-        {allReviews.map((review) => (
-          <div key={review.id} className="p-6 bg-card rounded-lg border border-border">
-            <div className="flex items-start justify-between mb-3">
+      <div className="space-y-4">
+        {all.map(r => (
+          <div key={r.id} className="p-5 bg-card rounded-xl border border-border">
+            <div className="flex items-start justify-between mb-2">
               <div>
-                <p className="font-bold text-foreground">{review.author}</p>
-                <p className="text-sm text-foreground/60">{review.date}</p>
+                <p className="font-bold">{r.author}</p>
+                <p className="text-sm text-foreground/60">{r.date}</p>
               </div>
-              <div className="flex items-center gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    size={16}
-                    className={`transition-colors ${i < review.rating ? "fill-accent text-accent" : "text-gray-300"}`}
-                  />
-                ))}
-              </div>
+              <div>{[0,1,2,3,4].map(i => <span key={i} className={`text-sm ${i < r.rating ? "text-accent" : "text-gray-500"}`}>★</span>)}</div>
             </div>
-            <p className="text-foreground/70">{review.text}</p>
+            <p className="text-foreground/80">{r.text}</p>
           </div>
         ))}
       </div>

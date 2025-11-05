@@ -1,14 +1,19 @@
-import React from "react";
-import SearchPage from "./pages/SearchPage.jsx";
+import { Routes, Route, Navigate } from "react-router-dom"
+
+import Home from "./pages/Home.jsx"
+import Welcome from "./pages/Welcome.jsx"
+import Auth from "./pages/Auth.jsx"
+import BusinessDetail from "./pages/BusinessDetails.jsx" // make sure filename matches
 
 export default function App() {
   return (
-    <div style={{ maxWidth: 900, margin: "0 auto", padding: "24px" }}>
-      <h1 style={{ marginBottom: 8 }}>Ayojon</h1>
-      <p style={{ color: "#555", marginBottom: 24 }}>
-        Simple starter wired to the API proxy.
-      </p>
-      <SearchPage />
-    </div>
-  );
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/welcome" element={<Welcome />} />
+      <Route path="/auth/:role" element={<Auth />} />
+      <Route path="/home" element={<Home />} />
+      <Route path="/business/:id" element={<BusinessDetail />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  )
 }
