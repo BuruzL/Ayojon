@@ -109,3 +109,6 @@ body{
 .mt-10{margin-top:2.5rem}
 .pb-24{padding-bottom:6rem}
 .pt-4{padding-top:1rem}
+.section-title{font-weight:800;font-size:1.25rem}
+.sidebar-sticky{min-width: 0}
+.col-span-2{grid-column: span 2 / span 2}
